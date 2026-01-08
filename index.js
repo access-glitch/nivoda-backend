@@ -1,24 +1,18 @@
-import express from "express";
-import axios from "axios";
-import cors from "cors";
-import dotenv from "dotenv";
-
-dotenv.config();
+const express = require("express");
+const axios = require("axios");
+const cors = require("cors");
+require("dotenv").config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-/* ===============================
-   ROOT CHECK (VERY IMPORTANT)
-================================ */
+// ROOT CHECK
 app.get("/", (req, res) => {
   res.send("Nivoda Backend is LIVE 🚀");
 });
 
-/* ===============================
-   NIVODA AUTH TOKEN API
-================================ */
+// AUTH → TOKEN
 app.post("/auth", async (req, res) => {
   try {
     const response = await axios.post(
@@ -36,20 +30,22 @@ app.post("/auth", async (req, res) => {
             }
           }
         `
-      }
+      },
+      { headers: { "Content-Type": "application/json" } }
     );
 
-    res.json(response.data.data.authenticate.username_and_password);
+    res.json({
+      token: response.data.data.authenticate.username_and_password.token
+    });
   } catch (err) {
-    res.status(500).json({ error: "Auth failed" });
+    res.status(500).json({ error: "Nivoda auth failed" });
   }
 });
 
-/* ===============================
-   GET DIAMONDS LIST
-================================ */
+// DIAMONDS
 app.post("/diamonds", async (req, res) => {
   const { token } = req.body;
+  if (!token) return res.status(400).json({ error: "Token required" });
 
   try {
     const response = await axios.post(
@@ -81,18 +77,17 @@ app.post("/diamonds", async (req, res) => {
           }
         }`,
         variables: { token }
-      }
+      },
+      { headers: { "Content-Type": "application/json" } }
     );
 
     res.json(response.data.data.as.diamonds_by_query.items);
   } catch (err) {
-    res.status(500).json({ error: "Diamond fetch failed" });
+    res.status(500).json({ error: "Diamonds fetch failed" });
   }
 });
 
-/* ===============================
-   SERVER START (RENDER SAFE)
-================================ */
+// SERVER START (Render safe)
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log("Server running on port", PORT);
