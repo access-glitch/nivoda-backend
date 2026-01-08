@@ -10,6 +10,13 @@ app.use(cors());
 app.use(express.json());
 
 /* ===============================
+   ROOT CHECK (VERY IMPORTANT)
+================================ */
+app.get("/", (req, res) => {
+  res.send("Nivoda Backend is LIVE 🚀");
+});
+
+/* ===============================
    NIVODA AUTH TOKEN API
 ================================ */
 app.post("/auth", async (req, res) => {
@@ -83,6 +90,10 @@ app.post("/diamonds", async (req, res) => {
   }
 });
 
-app.listen(3000, () => {
-  console.log("Server running on port 3000");
+/* ===============================
+   SERVER START (RENDER SAFE)
+================================ */
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log("Server running on port", PORT);
 });
