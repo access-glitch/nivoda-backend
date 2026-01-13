@@ -1,55 +1,49 @@
 require('dotenv').config();
-
 const express = require('express');
 const cors = require('cors');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-/* ======================
-   MIDDLEWARE
-====================== */
-app.use(cors({ origin: '*' }));
+app.use(cors());
 app.use(express.json());
 
-/* ======================
-   HOME ROUTE
-====================== */
 app.get('/', (req, res) => {
-  res.send('Nivoda Backend is LIVE !!🚀');
+  res.send('Nivoda Backend is LIVE !! 🚀');
 });
 
-/* ======================
-   DIAMONDS ROUTE (TEST DATA)
-====================== */
-app.get('/diamonds', (req, res) => {
-  res.json([
-    {
-      id: "NV001",
-      shape: "Round",
-      carat: 1.01,
-      color: "D",
-      clarity: "VS1",
-      cut: "Excellent",
-      certificate: "GIA",
-      price: 350000
+app.post('/calculate-price', (req, res) => {
+  const {
+    diamond_price_usd,
+    setting_type,
+    setting_price
+  } = req.body;
+
+  const USD_TO_INR = 83;
+  const diamond_base_inr = diamond_price_usd * USD_TO_INR;
+  const import_tax = diamond_base_inr * 0.10;
+  const margin_amount = diamond_base_inr * 0.25;
+  const labour_cost = 5000;
+
+  const final_price =
+    diamond_base_inr +
+    import_tax +
+    margin_amount +
+    labour_cost +
+    setting_price;
+
+  res.json({
+    breakdown: {
+      diamond_base_inr: Math.round(diamond_base_inr),
+      import_tax: Math.round(import_tax),
+      margin: Math.round(margin_amount),
+      labour: labour_cost,
+      setting: setting_price
     },
-    {
-      id: "NV002",
-      shape: "Round",
-      carat: 0.90,
-      color: "E",
-      clarity: "VS2",
-      cut: "Excellent",
-      certificate: "IGI",
-      price: 300000
-    }
-  ]);
+    final_price: Math.round(final_price)
+  });
 });
 
-/* ======================
-   SERVER START
-====================== */
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
