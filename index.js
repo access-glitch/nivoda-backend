@@ -1,31 +1,27 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const axios = require('axios');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-/* ======================
+/* =====================
    MIDDLEWARE
-====================== */
-app.use(cors({
-  origin: '*',
-  methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type']
-}));
-
+===================== */
+app.use(cors());
 app.use(express.json());
 
-/* ======================
-   HOME
-====================== */
+/* =====================
+   ROOT
+===================== */
 app.get('/', (req, res) => {
-  res.send('Nivoda Backend is LIVE !! 🚀');
+  res.send('Nivoda Backend is LIVE 🚀');
 });
 
-/* ======================
-   DIAMONDS (DUMMY DATA)
-====================== */
+/* =====================
+   DIAMONDS (DEMO - USD)
+===================== */
 app.get('/diamonds', (req, res) => {
   res.json([
     {
@@ -35,73 +31,116 @@ app.get('/diamonds', (req, res) => {
       color: "D",
       clarity: "VS1",
       certificate: "GIA",
-      price: 350000
+      price_usd: 4200
     },
     {
       id: "NV002",
       shape: "Round",
-      carat: 0.90,
+      carat: 0.9,
       color: "E",
       clarity: "VS2",
       certificate: "IGI",
-      price: 300000
+      price_usd: 3600
     }
   ]);
 });
 
-/* ======================
-   PRICE CALCULATION
-====================== */
-app.post('/calculate-price', (req, res) => {
+/* =====================
+   ✅ LIVE GOLD PRICE (USD)
+===================== */
+app.get('/gold-price', async (req, res) => {
   try {
-    const { diamond_price_usd, setting_type, setting_price } = req.body;
+    const response = await axios.get(
+      'https://www.goldapi.io/api/XAU/USD',
+      {
+        headers: {
+          'x-access-token': process.env.GOLD_API_KEY
+        }
+      }
+    );
 
-    if (!diamond_price_usd || !setting_price) {
-      return res.status(400).json({ error: 'Invalid input' });
-    }
+    const usdPerOunce = response.data.price;
 
-    // CONFIG
-    const USD_TO_INR = 83;
-    const IMPORT_TAX_PERCENT = 10;
-    const MARGIN_PERCENT = 25;
-
-    // CALCULATIONS
-    const diamond_base_inr = diamond_price_usd * USD_TO_INR;
-    const import_tax = diamond_base_inr * (IMPORT_TAX_PERCENT / 100);
-    const margin = (diamond_base_inr + import_tax) * (MARGIN_PERCENT / 100);
-
-    let labour_cost = 5000;
-    if (setting_type && setting_type.toLowerCase().includes('solitaire')) {
-      labour_cost = 7000;
-    }
-
-    const final_price =
-      diamond_base_inr +
-      import_tax +
-      margin +
-      labour_cost +
-      Number(setting_price);
+    // 1 Troy Ounce = 31.1035 grams
+    const usdPerGram24K = usdPerOunce / 31.1035;
 
     res.json({
-      breakdown: {
-        diamond_base_inr: Math.round(diamond_base_inr),
-        import_tax: Math.round(import_tax),
-        margin: Math.round(margin),
-        labour: labour_cost,
-        setting: Number(setting_price)
-      },
-      final_price: Math.round(final_price)
+      source: 'goldapi.io',
+      currency: 'USD',
+      per_gram_24k: Number(usdPerGram24K.toFixed(2)),
+      per_gram_22k: Number((usdPerGram24K * 0.916).toFixed(2)),
+      per_gram_18k: Number((usdPerGram24K * 0.75).toFixed(2)),
+      timestamp: response.data.timestamp
     });
 
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    console.error('Gold API Error:', error.message);
+    res.status(500).json({ error: 'Gold price fetch failed' });
+  }
+});
+
+/* =====================
+   ✅ FINAL PRICE CALCULATOR (USD)
+   Diamond + Gold + Labour + Margin
+===================== */
+app.post('/calculate-price', async (req, res) => {
+  try {
+    const {
+      diamond_price_usd,
+      gold_weight_grams,
+      gold_purity,      // 24 | 22 | 18
+      labour_cost_usd = 85,
+      margin_percent = 15
+    } = req.body;
+
+    /* ---- Gold Price ---- */
+    const goldRes = await axios.get(
+      'https://www.goldapi.io/api/XAU/USD',
+      {
+        headers: {
+          'x-access-token': process.env.GOLD_API_KEY
+        }
+      }
+    );
+
+    const goldPerGram24K =
+      goldRes.data.price / 31.1035;
+
+    let purityFactor = 1;
+    if (gold_purity === 22) purityFactor = 0.916;
+    if (gold_purity === 18) purityFactor = 0.75;
+
+    const goldCost =
+      gold_weight_grams * goldPerGram24K * purityFactor;
+
+    /* ---- Margin ---- */
+    const margin =
+      ((diamond_price_usd + goldCost) * margin_percent) / 100;
+
+    /* ---- Final ---- */
+    const finalPrice =
+      diamond_price_usd + goldCost + labour_cost_usd + margin;
+
+    res.json({
+      currency: 'USD',
+      breakdown: {
+        diamond_usd: Number(diamond_price_usd.toFixed(2)),
+        gold_cost_usd: Number(goldCost.toFixed(2)),
+        labour_usd: labour_cost_usd,
+        margin_usd: Number(margin.toFixed(2))
+      },
+      final_price_usd: Number(finalPrice.toFixed(2))
+    });
+
+  } catch (error) {
+    console.error('Price Calc Error:', error.message);
     res.status(500).json({ error: 'Price calculation failed' });
   }
 });
 
-/* ======================
-   SERVER START
-====================== */
+/* =====================
+   START SERVER
+===================== */
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`✅ Server running on port ${PORT}`);
 });
