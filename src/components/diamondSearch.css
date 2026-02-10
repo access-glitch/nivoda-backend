@@ -1,0 +1,84 @@
+/* ===============================
+   DIAMOND SEARCH SECTION
+================================ */
+.diamond-search {
+  width: 100%;
+  padding: 70px 40px 80px;
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(150, 0, 20, 0.92),
+      rgba(90, 0, 10, 0.98)
+    ),
+    url("/diamond-bg.webp") center / cover no-repeat;
+
+  text-align: center;
+  color: #fff;
+}
+
+/* TITLE */
+.diamond-search h2 {
+  font-size: 42px;
+  font-weight: 500;
+  margin-bottom: 40px;
+}
+
+/* SHAPE ROW */
+.shape-row {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 28px;
+}
+
+/* ITEM */
+.shape-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.25s ease;
+}
+
+.shape-item img {
+  width: 44px;
+  height: 44px;
+  filter: brightness(0) invert(1);
+  margin-bottom: 10px;
+}
+
+.shape-item span {
+  font-size: 13px;
+  letter-spacing: 1px;
+}
+
+/* HOVER */
+.shape-item:hover {
+  transform: translateY(-6px);
+}
+
+/* BOTTOM LINE */
+.diamond-search::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.6);
+  margin-top: 60px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+  .shape-row {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 600px) {
+  .diamond-search h2 {
+    font-size: 32px;
+  }
+}

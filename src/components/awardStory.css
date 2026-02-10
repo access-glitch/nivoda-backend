@@ -1,0 +1,88 @@
+/* ===============================
+   AWARD STORY – SINGLE BG IMAGE
+================================ */
+
+.award-section {
+  width: 100%;
+  min-height: 420px;
+  background: url("/award-bg.webp") center / contain no-repeat;
+  padding: 60px 40px;
+  display: flex;
+  align-items: center;
+}
+
+/* CONTENT LAYOUT */
+.award-content {
+  max-width: 1440px;
+  margin: 0 auto;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+/* LEFT */
+.award-brand {
+  font-size: 12px;
+  letter-spacing: 4px;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.award-left h2 {
+  font-size: 46px;
+  font-weight: 500;
+  line-height: 1.1;
+}
+
+.award-left h2 span {
+  color: #c51f2f;
+}
+
+.award-sub {
+  margin-top: 10px;
+  font-size: 13px;
+  letter-spacing: 2px;
+}
+
+/* RIGHT */
+.award-right p {
+  font-size: 15px;
+  line-height: 1.8;
+  color: #333;
+  max-width: 520px;
+  margin-bottom: 28px;
+}
+
+.award-btn {
+  padding: 14px 38px;
+  font-size: 13px;
+  letter-spacing: 1.5px;
+  border: none;
+  cursor: pointer;
+  color: #fff;
+  background: linear-gradient(to bottom, #b31222, #5a0006);
+}
+
+/* ===============================
+   RESPONSIVE
+================================ */
+
+@media (max-width: 1024px) {
+  .award-content {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .award-section {
+    background-size: cover;
+    padding: 50px 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .award-left h2 {
+    font-size: 36px;
+  }
+}

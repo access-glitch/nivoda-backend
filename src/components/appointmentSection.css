@@ -1,0 +1,73 @@
+/* ===============================
+   APPOINTMENT SECTION
+================================ */
+
+.ap-section {
+  background: url("/appointment-bg.webp") center / cover no-repeat;
+  padding: 100px 40px;
+}
+
+.ap-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  align-items: center;
+  gap: 80px;
+}
+
+/* LEFT IMAGE */
+.ap-images {
+  display: flex;
+  justify-content: center;
+}
+
+.ap-img-main {
+  width: 100%;
+  max-width: 520px;
+  display: block;
+}
+
+/* RIGHT CONTENT */
+.ap-content h2 {
+  font-size: 44px;
+  font-weight: 500;
+  margin-bottom: 24px;
+  line-height: 1.2;
+}
+
+.ap-content p {
+  font-size: 17px;
+  color: #555;
+  max-width: 520px;
+  margin-bottom: 34px;
+}
+
+/* BUTTON */
+.ap-btn {
+  background: linear-gradient(to bottom, #b31222, #5a0006);
+  color: #fff;
+  border: none;
+  padding: 14px 36px;
+  font-size: 13px;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+  .ap-container {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .ap-images {
+    margin-bottom: 40px;
+  }
+}
+
+@media (max-width: 600px) {
+  .ap-content h2 {
+    font-size: 32px;
+  }
+}

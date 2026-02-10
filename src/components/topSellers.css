@@ -1,0 +1,121 @@
+/* ===============================
+   TOP SELLERS (ISOLATED)
+================================ */
+
+.ts-wrapper {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 80px 40px;
+  background: #fff;
+}
+
+/* TITLE */
+.ts-title {
+  text-align: center;
+  font-size: 42px;
+  font-weight: 500;
+  margin-bottom: 60px;
+}
+
+/* GRID */
+.ts-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 40px;
+}
+
+/* CARD */
+.ts-card {
+  background: #fff;
+}
+
+/* IMAGE BOX */
+.ts-image-box {
+  position: relative;
+  padding: 20px;
+  background: #fff;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+.ts-image-box img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+}
+
+/* BADGE */
+.ts-badge {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background: #d61f2c;
+  color: #fff;
+  font-size: 11px;
+  padding: 4px 8px;
+  letter-spacing: 1px;
+  z-index: 2;
+}
+
+/* INFO */
+.ts-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 14px;
+}
+
+.ts-text h3 {
+  font-size: 14px;
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+.ts-text p {
+  font-size: 13px;
+  color: #666;
+}
+
+/* WISHLIST */
+.ts-wishlist {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: #d61f2c;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* LOAD MORE */
+.ts-load-wrap {
+  text-align: center;
+  margin-top: 60px;
+}
+
+.ts-load-btn {
+  padding: 14px 38px;
+  font-size: 13px;
+  letter-spacing: 1.5px;
+  border: none;
+  cursor: pointer;
+  color: #fff;
+  background: linear-gradient(to bottom, #b31222, #5a0006);
+}
+
+/* RESPONSIVE */
+@media (max-width: 1200px) {
+  .ts-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .ts-grid {
+    grid-template-columns: 1fr;
+  }
+}
