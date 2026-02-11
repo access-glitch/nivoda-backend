@@ -8,7 +8,15 @@ services:
     envVars:
       - key: PORT
         value: 3000
-      - key: CORS_ORIGIN
-        value: https://ring-builder-frontend.onrender.com,https://danhov.innovatedevelopers.com
       - key: NODE_ENV
         value: production
+      - key: CORS_ORIGIN
+        value: https://ring-builder-frontend.onrender.com,https://danhov.innovatedevelopers.com
+      - key: NIVODA_API_URL
+        value: https://integrations.nivoda.net/api/diamonds
+      - key: NIVODA_USERNAME
+        sync: false
+      - key: NIVODA_PASSWORD
+        sync: false
+      - key: GOLD_API_KEY
+        sync: false
