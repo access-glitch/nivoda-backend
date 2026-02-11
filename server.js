@@ -24,11 +24,19 @@ app.use(
 );
 app.use(express.json());
 
+// Serve optional public assets (put images or static files in ./public)
+app.use("/public", express.static(path.join(__dirname, "public")));
+
 /* ======================
    ROOT CHECK (IMPORTANT)
 ====================== */
 app.get("/", (req, res) => {
   res.send("Ring Builder Backend is running 🚀");
+});
+
+// simple health check for render or other platforms
+app.get("/api/health", (req, res) => {
+   res.json({ status: "ok", uptime: process.uptime() });
 });
 
 /* ======================
