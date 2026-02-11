@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: ring-builder-backend
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: PORT
+        value: 3000
+      - key: CORS_ORIGIN
+        value: https://ring-builder-frontend.onrender.com,https://danhov.innovatedevelopers.com
+      - key: NODE_ENV
+        value: production
