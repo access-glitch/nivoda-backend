@@ -1,14 +1,4 @@
 services:
-  - type: static
-    name: ring-builder-frontend
-    buildCommand: npm install && npm run build
-    staticPublishPath: ./dist
-    envVars:
-      - key: VITE_BACKEND_URL
-        value: https://ring-builder-backend-31c4.onrender.com
-      - key: VITE_SHOPIFY_STORE_URL
-        value: https://danhov-2.myshopify.com
-
   - type: web
     name: ring-builder-backend
     env: node
@@ -39,3 +29,10 @@ services:
         sync: false
       - key: PORT
         value: 10000
+
+  - type: web
+    name: ring-builder-frontend
+    env: static
+    plan: free
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
