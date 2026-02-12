@@ -1,0 +1,41 @@
+services:
+  - type: static
+    name: ring-builder-frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    envVars:
+      - key: VITE_BACKEND_URL
+        value: https://ring-builder-backend-31c4.onrender.com
+      - key: VITE_SHOPIFY_STORE_URL
+        value: https://danhov-2.myshopify.com
+
+  - type: web
+    name: ring-builder-backend
+    env: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: SHOPIFY_STORE_DOMAIN
+        value: danhov-2.myshopify.com
+      - key: SHOPIFY_ADMIN_TOKEN
+        sync: false
+      - key: SHOPIFY_STOREFRONT_TOKEN
+        sync: false
+      - key: SHOPIFY_API_VERSION
+        value: 2025-01
+      - key: NIVODA_API_KEY
+        sync: false
+      - key: NIVODA_USERNAME
+        sync: false
+      - key: NIVODA_PASSWORD
+        sync: false
+      - key: NIVODA_API_URL
+        value: https://integrations.nivoda.net/api/diamonds
+      - key: FRONTEND_URL
+        sync: false
+      - key: PORT
+        value: 10000

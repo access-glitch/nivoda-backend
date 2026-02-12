@@ -3,9 +3,15 @@ import { Search, ShoppingBag, X } from "lucide-react";
 import { Link } from "react-router-dom"; // ✅ IMPORTANT
 import { useMemo, useState } from "react";
 import { useCart } from "../context/CartContext";
+import {
+  buildCheckoutPayloadFromCartItems,
+  createShopifyCheckout,
+} from "../api/shopifyCheckout";
 
-const CHECKOUT_URL =
-  "https://danhov-2.myshopify.com/checkouts/cn/hWN7dRDW6bkYNnue4nyWl1a0/en-co?_r=AQAB9c9WMGhBT5N7xFA7zG5mWitnj7HXUrfYvHq54oHy8eE&adminUrl=admin.shopify.com&cart_link_id=M4xgztKg&editedAt=2025-12-02T16%3A04%3A20Z&isPublished=true&preview_theme_id=190642225318&profileName=My+Store+configuration&profile_preview_token=eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiI1amk3MDYtMGUubXlzaG9waWZ5LmNvbSIsImF1ZCI6IjVqaTcwNi0wZS5teXNob3BpZnkuY29tIiwibmJmIjoxNzcwMzc1MzI1LCJjaGVja291dF9wcm9maWxlX2lkIjo2MzkzMjAwODA2LCJjaGVja291dF9wcm9maWxlX3B1Ymxpc2hlZCI6dHJ1ZSwidXNlcl9pZCI6MTMyODg2MjAwNDg2LCJleHAiOjE3NzAzNzg5MjV9.ch5xund_Ibw1UtVVcFhxT6lzBZlBeiqEGsDcYMOiyn0";
+const SHOPIFY_STORE_URL = import.meta.env.VITE_SHOPIFY_STORE_URL;
+
+const normalizeBaseUrl = (value) =>
+  typeof value === "string" ? value.replace(/\/+$/, "") : "";
 
 const formatPrice = (value) =>
   Number.isFinite(value) ? `$${value.toLocaleString()}` : "-";
@@ -13,6 +19,7 @@ const formatPrice = (value) =>
 const Header = () => {
   const { count, items, removeFromCart } = useCart();
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
 
   const cartTotal = useMemo(
     () =>
@@ -123,11 +130,39 @@ const Header = () => {
               <button
                 type="button"
                 className="cart-checkout"
-                onClick={() => {
-                  window.location.href = CHECKOUT_URL;
+                disabled={isCheckingOut}
+                onClick={async () => {
+                  try {
+                    setIsCheckingOut(true);
+
+                    const payload = buildCheckoutPayloadFromCartItems(items);
+
+                    if (!payload.lineItems.length) {
+                      const baseUrl = normalizeBaseUrl(SHOPIFY_STORE_URL);
+                      if (!baseUrl) {
+                        alert("No checkoutable Shopify items in cart yet.");
+                        return;
+                      }
+                      window.location.href = `${baseUrl}/cart`;
+                      return;
+                    }
+
+                    const checkout = await createShopifyCheckout(payload);
+
+                    if (!checkout?.checkoutUrl) {
+                      throw new Error("Checkout URL missing from API response");
+                    }
+
+                    window.location.href = checkout.checkoutUrl;
+                  } catch (error) {
+                    console.error("Checkout error", error);
+                    alert("Unable to start checkout. Please try again.");
+                  } finally {
+                    setIsCheckingOut(false);
+                  }
                 }}
               >
-                Checkout
+                {isCheckingOut ? "Starting checkout..." : "Checkout"}
               </button>
             </div>
           </aside>

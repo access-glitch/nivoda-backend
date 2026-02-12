@@ -1,5 +1,4 @@
-const API_BASE_URL =
-  import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+import { apiGet } from "./backendClient";
 
 export async function getDiamonds(params = {}) {
   const query = new URLSearchParams();
@@ -10,13 +9,5 @@ export async function getDiamonds(params = {}) {
     }
   });
 
-  const res = await fetch(
-    `${API_BASE_URL}/api/diamonds${query.toString() ? `?${query}` : ""}`
-  );
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch diamonds");
-  }
-
-  return res.json();
+  return apiGet(`/api/diamonds${query.toString() ? `?${query}` : ""}`);
 }

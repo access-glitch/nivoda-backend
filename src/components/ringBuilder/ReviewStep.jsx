@@ -64,6 +64,9 @@ const ReviewStep = () => {
       createdAt: new Date().toISOString(),
       title: ringTitle,
       settingId: setting?.id || null,
+      shopify: {
+        merchandiseId: setting?.merchandiseId || null,
+      },
       diamondId: diamond?.id || null,
       prices: {
         setting: settingPrice,
