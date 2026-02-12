@@ -2,7 +2,6 @@ services:
   - type: web
     name: ring-builder-backend
     env: node
-    plan: free
     rootDir: backend
     buildCommand: npm install
     startCommand: npm start
@@ -33,6 +32,5 @@ services:
   - type: web
     name: ring-builder-frontend
     env: static
-    plan: free
     buildCommand: npm install && npm run build
     staticPublishPath: dist
