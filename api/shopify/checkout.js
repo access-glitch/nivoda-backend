@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+console.log('api/shopify/checkout loaded');
+
 const httpClient = axios.create({
   timeout: 20000,
 });
@@ -12,10 +14,20 @@ const env = {
   },
 };
 
+if (!env.shopify.storeDomain || !env.shopify.storefrontToken) {
+  console.warn('api/shopify/checkout: missing SHOPIFY env vars', {
+    SHOPIFY_STORE_DOMAIN: !!env.shopify.storeDomain,
+    SHOPIFY_STOREFRONT_TOKEN: !!env.shopify.storefrontToken,
+  });
+}
+
 const storefrontUrl = `https://${env.shopify.storeDomain}/api/${env.shopify.apiVersion}/graphql.json`;
 
 async function storefrontRequest(query, variables = {}) {
   try {
+    if (!env.shopify.storeDomain || !env.shopify.storefrontToken) {
+      throw new Error('Missing SHOPIFY_STORE_DOMAIN or SHOPIFY_STOREFRONT_TOKEN');
+    }
     const response = await httpClient.post(
       storefrontUrl,
       { query, variables },
@@ -33,7 +45,12 @@ async function storefrontRequest(query, variables = {}) {
 
     return response.data?.data;
   } catch (error) {
-    throw new Error("Failed to call Shopify Storefront API");
+    console.error('storefrontRequest error', {
+      message: error?.message,
+      url: storefrontUrl,
+      query: query && query.slice ? query.slice(0, 200) : query,
+    });
+    throw new Error("Failed to call Shopify Storefront API: " + (error?.message || 'unknown'));
   }
 }
 
