@@ -1,6 +1,4 @@
-const API_BASE_URL = import.meta.env.DEV
-  ? ""
-  : (import.meta.env.VITE_BACKEND_URL || "").replace(/\/+$/, "");
+const API_BASE_URL = "";
 
 function buildUrl(path) {
   if (!API_BASE_URL) {
