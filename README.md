@@ -46,3 +46,15 @@ npm start
 Then hit the health or diamonds endpoints above (when running locally the base URL is `http://localhost:3000/api`).
 
 If you'd like, I can update the frontend repo (if you provide it) to switch the API base automatically to the deployed URL.
+
+6) Use a custom domain (e.g. `https://danhov.innovatedevelopers.com`)
+
+- If you want the backend to be reachable at `https://danhov.innovatedevelopers.com` you must:
+	1. Add the custom domain to your Render service (Dashboard → your service → Settings → Custom Domains). Render will provide a DNS target (CNAME).
+	2. In your DNS provider, create a `CNAME` record for `danhov.innovatedevelopers.com` pointing to the Render DNS target.
+	3. Wait for DNS propagation and ensure Render issues an SSL cert (Render does this automatically after domain is verified).
+	4. In Render environment variables for the backend service, ensure `CORS_ORIGIN` includes the frontend domain(s) that will call the backend (for example `https://ring-builder-frontend.onrender.com,https://danhov.innovatedevelopers.com`).
+
+- After the custom domain is active, update your frontend API base to `https://danhov.innovatedevelopers.com/api` (or set an env var with that value) and redeploy the frontend.
+
+If you want, I can prepare the exact DNS CNAME value once you tell me the Render service public hostname (for example `ring-builder-backend.onrender.com`).
